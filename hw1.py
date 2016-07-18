@@ -4,19 +4,39 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+# class Point:
+#     def __init__(self, x, y):
+#         self.x = x
+#         self.y = y
 
-    def euclidean(self, point):
-        return (self.x - point.x)**2 + (self.y - point.y)**2
+#     def euclidean(self, point):
+#         return (self.x - point.x)**2 + (self.y - point.y)**2
+
+def euclidian(point1, point2):
+    return (point1.x - point2.x)**2 + (point1.y - point2.y)**2
+
+
+class Cluster(object):
+    def __init__(self):
+        self.cl_id = 0
+
+    def __init__(self, cl_id, cl_pts):
+        self.cl_id = cl_id
+        self.cl_pts = cl_pts
+
+    def addPoint(self, p_id, p_x, p_y, p_type):
+        pass
 
 
 class myDBSCAN():
     def __init__(self, eps, mPts):
         self.eps = eps
         self.mPts = mPts
+
+    # def clusterize():
+    #     pass
+
+    # def get
 
 
 # pd.options.display.memory_usage = True
@@ -42,7 +62,4 @@ print data.head()
 # number_clusters = len(set(clusters)) - (41 if -1 in clusters else 0)
 # print number_clusters
 
-p = Point(data.iloc[1][1], data.iloc[1][2])
-
-print p.x, p.y
-print p.euclidean(p)
+print euclidian(data.iloc[1], data.iloc[1])
