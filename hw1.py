@@ -9,17 +9,15 @@ class Point:
         self.x = x
         self.y = y
 
-    def euclidean(point):
+    def euclidean(self, point):
         return (self.x - point.x)**2 + (self.y - point.y)**2
 
-# class Cluster():
-#     def __init__(self, ):
-#         self. = arg
 
+class myDBSCAN():
+    def __init__(self, eps, mPts):
+        self.eps = eps
+        self.mPts = mPts
 
-# class Cluster():
-#         def __init__(self, Point ):
-#             self.arg = arg
 
 # pd.options.display.memory_usage = True
 data = pd.read_csv("order201510-small.csv",
@@ -30,28 +28,21 @@ data = pd.read_csv("order201510-small.csv",
 print "head:"
 print data.head()
 
-print "index"
-print data.index
+# print "seprate"
+# kekid, kekx, keky = data.iloc[1]
+# # dont gorget to output as int
+# print "kekid is {}; kekx is {}; while keky is {}".format(kekid, kekx, keky)
 
-print "describe"
-print data.describe()
-
-print "trying to print first n samples"
-print data[0:1]
-
-print "some info"
-print data.info()
-
-print "seprate"
-kekid, kekx, keky = data.iloc[1]
-# dont gorget to output as int
-print "kekid is {}; kekx is {}; while keky is {}".format(kekid, kekx, keky)
-
-print "real separate"
-print data.iloc[1][1], data.iloc[1][2]
+# print "real separate"
+# print data.iloc[1][1], data.iloc[1][2]
 
 
 # db = DBSCAN(eps=0.001, min_samples=4).fit(data)
 # clusters = db.labels_
-# number_clusters = len(set(clusters)) - (1 if -1 in clusters else 0)
+# number_clusters = len(set(clusters)) - (41 if -1 in clusters else 0)
 # print number_clusters
+
+p = Point(data.iloc[1][1], data.iloc[1][2])
+
+print p.x, p.y
+print p.euclidean(p)
