@@ -39,7 +39,7 @@ class myDBSCAN():
     # def get
 
 
-# pd.options.display.memory_usage = True
+# pd.options.display.memory_usage = True #for >1.16
 data = pd.read_csv("order201510-small.csv",
                    header=None, usecols=[0, 3, 4], names=['id', 'x', 'y'], dtype={'id': np.int32})
 # , dtype={'id': np.int64, 'x': np.float.64, 'y': np.float.64}
