@@ -14,6 +14,7 @@ import pandas as pd
 
 class myDBSCAN():
     clusters = []
+    cluster_number = 0
 
     def __init__(self, eps, m_pts, metric="euclidian"):
         self.eps = eps
@@ -21,11 +22,10 @@ class myDBSCAN():
         self.metric = metric
 
     class Cluster():
-        cluster_number = 0
 
         def __init__(self):  # do i need this crap?
-            self.cl_id = self.cluster_number  # do i need this crap?
-            self.cluster_number += 1  # do i need this crap?
+            self.cl_id = myDBSCAN.cluster_number  # do i need this crap?
+            myDBSCAN.cluster_number += 1  # do i need this crap?
             self.cluster_points = pd.DataFrame()
 
         def addPoint(self, point):
@@ -40,7 +40,7 @@ class myDBSCAN():
         self.data_size = self.data.shape[0]
         for x in xrange(0, self.data_size):
             if self.data.iloc[x][3] == 'y':
-                pass
+                pass  # not dummy
             self.data.iloc[x][3] = 'y'
             neighbours = self.find_neighbours(self.data.iloc[x])
             if neighbours.shape[0] < self.m_pts:
@@ -49,8 +49,8 @@ class myDBSCAN():
                 new_cluster = self.Cluster()
                 # new_cluster.cluster_number += 1
                 new_cluster.expandCluster(self.data.iloc[x], neighbours)
-                self.clusters.append(new_cluster)
-        return self.clusters
+                myDBSCAN.clusters = myDBSCAN.clusters.append(new_cluster)
+        return myDBSCAN.clusters
 
     def expandCluster(self, point, neighbours):
         self.Cluster.addPoint(point)
@@ -82,7 +82,8 @@ class myDBSCAN():
         return neighbours
 
 data = pd.read_csv("order201510-small.csv", header=None,
-                   usecols=[0, 3, 4], names=['id', 'x', 'y'], dtype={'id': np.int32})
+                   usecols=[0, 3, 4], names=['id', 'x', 'y'],
+                   dtype={'id': np.int32})
 new_data = data.assign(visited=lambda x: 'n', noise=lambda x: 'n')
 
 
