@@ -62,7 +62,8 @@ class myDBSCAN():
                     neighbours.iloc[point_next])
                 if neighbours_next.shape[0] >= self.m_pts:
                     neighbours = neighbours.append(neighbours_next)
-            # if  # func with cluster belonging
+            if !self.belongToCluster(neighbours.iloc[point_next]):
+                self.Cluster.addPoint(neighbours.iloc[point_next])
             point_next += 1
 
     def belongToCluster(self, point):
