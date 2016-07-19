@@ -67,8 +67,13 @@ class myDBSCAN():
 
     def belongToCluster(self, point):
         belongs = 0
-        for x in xrange(0, 10):
-            pass
+        for cl in xrange(0, myDBSCAN.number_clusters):
+            for p in xrange(0, cl[x].shape[0]):
+                if cl[x].id[p] == point.id[0]:
+                    belongs = 1
+                    break
+                else:
+                    pass
         return belongs
 
     def euclidian(point1, point2):
@@ -106,7 +111,8 @@ for x in xrange(0, d1.shape[0]):
         d1 = d1.append(new_data.head(11, 20))
 
 print "anpother version:"
-
+d1 = d1.sort_values(['id'], ascending=[True])  # mb i pohui
+print d1
 
 # # print d1
 
@@ -115,8 +121,8 @@ print "anpother version:"
 # df = df.append(d1.iloc[1])
 # # print df
 
-for x in xrange(0, 10):
-    print "sdf", x
+# for x in xrange(0, 10):
+#     print "sdf", x
 # print euclidian(data.iloc[1], data.iloc[1])
 
 
