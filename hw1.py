@@ -12,17 +12,14 @@ import pandas as pd
 #     def euclidean(self, point):
 #         return (self.x - point.x)**2 + (self.y - point.y)**2
 
-class Cluster(object):
+class Cluster():
     cluster_number = 0
 
     def __init__(self):  # do i need this crap?
-        self.cl_id = 0
+        self.cluster_number += 1
+        self.cl_id = self.cluster_number
 
-    def __init__(self, cl_id, cl_pts):  # change the params
-        self.cl_id = cl_id
-        self.cl_pts = cl_pts
-
-    def addPoint(self, p_id, p_x, p_y, p_visited):  # change the params
+    def expandCluster(self, point, neighbours):
         pass
 
 
@@ -33,6 +30,7 @@ class myDBSCAN():
         self.metric = metric
 
     def clusterize(self, input_data):
+        clusters = []
         self.data = input_data
         del input_data
         self.data_size = self.data.shape[0]
@@ -41,6 +39,14 @@ class myDBSCAN():
                 pass
             self.data.iloc[x][3] = 'y'
             neighbours = self.find_neighbours(self.data.iloc[x])
+            if neighbours.shape[0] < self.m_pts:
+                self.data.noise[x] = 'y'
+            else:
+                new_cluster = Cluster()
+                # new_cluster.cluster_number += 1
+                new_cluster.expandCluster(self.data.iloc[x], neighbours)
+                clusters.append(new_cluster)
+        return clusters
 
     def euclidian(point1, point2):
         return (point1.x[0] - point2.x[0])**2 + (point1.y[0] - point2.y[0])**2
@@ -48,7 +54,7 @@ class myDBSCAN():
     def find_neighbours(self, point):
         neighbours = pd.DataFrame()
         for x in xrange(0, self.data_size):
-            if point.id[0] != self.data.id[x] and self.euclidian(point, self.data.iloc[x]) < self.eps:
+            if self.euclidian(point, self.data.iloc[x]) < self.eps:
                 neighbours = neighbours.append(self.data.iloc[x])
         return neighbours
 
@@ -60,28 +66,28 @@ new_data = data.assign(visited=lambda x: 'n', noise=lambda x: 'n')
 print "head:"
 print new_data.head()
 print new_data.shape[0]
-print new_data.iloc[0]
-print new_data.iloc[1]
-print new_data.iloc[2]
+# print new_data.iloc[0]
+# print new_data.iloc[1]
+# print new_data.iloc[2]
 
-print "_____"
-print new_data.id[0]
-print new_data.x[0]
-print new_data.y[0]
+# print "_____"
+# print new_data.id[0]
+# print new_data.x[0]
+# print new_data.y[0]
 
-d1 = new_data.head(10)
-print d1
+# d1 = new_data.head(10)
+# print d1
 
-df = pd.DataFrame()
-print df.empty
-df = df.append(d1.iloc[1])
-print df
+# df = pd.DataFrame()
+# print df.empty
+# df = df.append(d1.iloc[1])
+# print df
 
-for x in xrange(1, 10):
-    if x % 2 == 0:
-        pass
-    else:
-        print x
+# for x in xrange(1, 10):
+#     if x % 2 == 0:
+#         pass
+#     else:
+#         print x
 # print euclidian(data.iloc[1], data.iloc[1])
 
 
