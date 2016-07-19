@@ -46,11 +46,11 @@ class myDBSCAN():
             if neighbours.shape[0] < self.m_pts:
                 self.data.noise[x] = 'y'
             else:
-                new_cluster = Cluster()
+                new_cluster = self.Cluster()
                 # new_cluster.cluster_number += 1
                 new_cluster.expandCluster(self.data.iloc[x], neighbours)
-                clusters.append(new_cluster)
-        return clusters
+                self.clusters.append(new_cluster)
+        return self.clusters
 
     def expandCluster(self, point, neighbours):
         self.Cluster.addPoint(point)
@@ -62,8 +62,14 @@ class myDBSCAN():
                     neighbours.iloc[point_next])
                 if neighbours_next.shape[0] >= self.m_pts:
                     neighbours = neighbours.append(neighbours_next)
-            if #func with cluster belonging
+            # if  # func with cluster belonging
             point_next += 1
+
+    def belongToCluster(self, point):
+        belongs = 0
+        for x in xrange(0, 10):
+            pass
+        return belongs
 
     def euclidian(point1, point2):
         return (point1.x[0] - point2.x[0])**2 + (point1.y[0] - point2.y[0])**2
@@ -100,8 +106,6 @@ for x in xrange(0, d1.shape[0]):
 
 print "anpother version:"
 
-while
-
 
 # # print d1
 
@@ -110,11 +114,8 @@ while
 # df = df.append(d1.iloc[1])
 # # print df
 
-# for x in xrange(1, 10):
-#     if x % 2 == 0:
-#         pass
-#     else:
-#         print x
+for x in xrange(0, 10):
+    print "sdf", x
 # print euclidian(data.iloc[1], data.iloc[1])
 
 
