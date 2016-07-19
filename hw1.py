@@ -16,8 +16,8 @@ class Cluster():
     cluster_number = 0
 
     def __init__(self):  # do i need this crap?
-        self.cluster_number += 1
         self.cl_id = self.cluster_number
+        self.cluster_number += 1
 
     def expandCluster(self, point, neighbours):
         pass
