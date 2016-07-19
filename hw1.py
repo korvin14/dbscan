@@ -13,6 +13,8 @@ import pandas as pd
 #         return (self.x - point.x)**2 + (self.y - point.y)**2
 
 class myDBSCAN():
+    clusters = []
+
     def __init__(self, eps, m_pts, metric="euclidian"):
         self.eps = eps
         self.m_pts = m_pts
@@ -22,12 +24,9 @@ class myDBSCAN():
         cluster_number = 0
 
         def __init__(self):  # do i need this crap?
-            self.cl_id = self.cluster_number # do i need this crap?
-            self.cluster_number += 1 # do i need this crap?
+            self.cl_id = self.cluster_number  # do i need this crap?
+            self.cluster_number += 1  # do i need this crap?
             self.cluster_points = pd.DataFrame()
-
-        def expandCluster(self, point, neighbours):
-            self.addPoint(point)
 
         def addPoint(self, point):
             # if : # CHECK IF WE ALREADY HAVE POINT WITH THIS ID
@@ -36,7 +35,6 @@ class myDBSCAN():
             #     pass
 
     def clusterize(self, input_data):
-        clusters = []
         self.data = input_data
         del input_data
         self.data_size = self.data.shape[0]
@@ -53,6 +51,19 @@ class myDBSCAN():
                 new_cluster.expandCluster(self.data.iloc[x], neighbours)
                 clusters.append(new_cluster)
         return clusters
+
+    def expandCluster(self, point, neighbours):
+        self.Cluster.addPoint(point)
+        point_next = 0
+        while neighbours.iloc[point_next]:
+            if neighbours.visited[point_next] == 'n':
+                neighbours.visited[point_next] = 'y'
+                neighbours_next = self.find_neighbours(
+                    neighbours.iloc[point_next])
+                if neighbours_next.shape[0] >= self.m_pts:
+                    neighbours = neighbours.append(neighbours_next)
+            if #func with cluster belonging
+            point_next += 1
 
     def euclidian(point1, point2):
         return (point1.x[0] - point2.x[0])**2 + (point1.y[0] - point2.y[0])**2
@@ -89,7 +100,7 @@ for x in xrange(0, d1.shape[0]):
 
 print "anpother version:"
 
-while 
+while
 
 
 # # print d1
