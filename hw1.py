@@ -4,14 +4,6 @@ import pandas as pd
 # from sklearn.cluster import DBSCAN
 
 
-# class Point:
-#     def __init__(self, x, y):
-#         self.x = x
-#         self.y = y
-
-#     def euclidean(self, point):
-#         return (self.x - point.x)**2 + (self.y - point.y)**2
-
 class myDBSCAN():
     clusters = []
     cluster_number = 0
@@ -69,8 +61,8 @@ class myDBSCAN():
     def belongToCluster(self, point):
         belongs = 0
         for cl in xrange(0, myDBSCAN.number_clusters):
-            for p in xrange(0, cl[x].shape[0]):
-                if cl[x].id[p] == point.id[0]:
+            for p in xrange(0, self.clusters.shape[0]):
+                if self.clusters[cl].id[p] == point.id[0]:
                     belongs = 1
                     break
                 else:
@@ -87,50 +79,10 @@ class myDBSCAN():
                 neighbours = neighbours.append(self.data.iloc[x])
         return neighbours
 
+__main__
 data = pd.read_csv("order201510-small.csv", header=None,
                    usecols=[0, 3, 4], names=['id', 'x', 'y'],
                    dtype={'id': np.int32})
 new_data = data.assign(visited=lambda x: 'n', noise=lambda x: 'n')
 
-
-print "head:"
-print new_data.head()
-print new_data.shape[0]
-# print new_data.iloc[0]
-# print new_data.iloc[1]
-# print new_data.iloc[2]
-
-# print "_____"
-# print new_data.id[0]
-# print new_data.x[0]
-# print new_data.y[0]
-
-d1 = new_data.head(10)
-for x in xrange(0, d1.shape[0]):
-    print x
-    if x == 10:
-        d1 = d1.append(new_data.head(11, 20))
-
-print "anpother version:"
-d1 = d1.sort_values(['id'], ascending=[True])  # mb i pohui
-print d1
-
-# # print d1
-
-# df = pd.DataFrame()
-# print df.empty
-# df = df.append(d1.iloc[1])
-# # print df
-
-# for x in xrange(0, 10):
-#     print "sdf", x
-# print euclidian(data.iloc[1], data.iloc[1])
-
-
-"""scikit check"""
-# print "scikit check"
-# data should be just 3 and 4th column with noheader. and that's it
-# db = DBSCAN(eps=0.001, min_samples=4).fit(data)
-# clusters = db.labels_
-# number_clusters = len(set(clusters)) - (1 if -1 in clusters else 0)
-# print number_clusters
+# d1 = d1.sort_values(['id'], ascending=[True])  # mb need sorting
