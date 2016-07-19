@@ -34,22 +34,23 @@ class myDBSCAN():
 
     def clusterize(self, input_data):
         self.data = input_data
-        # del input_data
+        del input_data
         self.data_size = self.data.shape[0]
-        # for x in xrange(0, self.data_size):
-        #     if self.data.iloc[x][3] == 'y':
-        #         pass
-        #     self.data.iloc[x][3] = 'y'
-        #     neighbours = find_neighbours(self.data.iloc[x])
+        for x in xrange(0, self.data_size):
+            if self.data.iloc[x][3] == 'y':
+                pass
+            self.data.iloc[x][3] = 'y'
+            neighbours = self.find_neighbours(self.data.iloc[x])
 
     def euclidian(point1, point2):
-        return (point1.x - point2.x)**2 + (point1.y - point2.y)**2
+        return (point1.x[0] - point2.x[0])**2 + (point1.y[0] - point2.y[0])**2
 
-    def find_neighbours(point):
-        # neigbours = pd.DataFrame()
-        # for x in xrange(0, self.data_size):
-        pass  # some code here
-        # return neighbours
+    def find_neighbours(self, point):
+        neighbours = pd.DataFrame()
+        for x in xrange(0, self.data_size):
+            if point.id[0] != self.data.id[x] and self.euclidian(point, self.data.iloc[x]) < self.eps:
+                neighbours = neighbours.append(self.data.iloc[x])
+        return neighbours
 
 data = pd.read_csv("order201510-small.csv", header=None,
                    usecols=[0, 3, 4], names=['id', 'x', 'y'], dtype={'id': np.int32})
