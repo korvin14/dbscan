@@ -12,22 +12,28 @@ import pandas as pd
 #     def euclidean(self, point):
 #         return (self.x - point.x)**2 + (self.y - point.y)**2
 
-class Cluster():
-    cluster_number = 0
-
-    def __init__(self):  # do i need this crap?
-        self.cl_id = self.cluster_number
-        self.cluster_number += 1
-
-    def expandCluster(self, point, neighbours):
-        pass
-
-
 class myDBSCAN():
     def __init__(self, eps, m_pts, metric="euclidian"):
         self.eps = eps
         self.m_pts = m_pts
         self.metric = metric
+
+    class Cluster():
+        cluster_number = 0
+
+        def __init__(self):  # do i need this crap?
+            self.cl_id = self.cluster_number # do i need this crap?
+            self.cluster_number += 1 # do i need this crap?
+            self.cluster_points = pd.DataFrame()
+
+        def expandCluster(self, point, neighbours):
+            self.addPoint(point)
+
+        def addPoint(self, point):
+            # if : # CHECK IF WE ALREADY HAVE POINT WITH THIS ID
+            self.cluster_points = self.cluster_points.append(point)
+            # else:
+            #     pass
 
     def clusterize(self, input_data):
         clusters = []
@@ -75,13 +81,23 @@ print new_data.shape[0]
 # print new_data.x[0]
 # print new_data.y[0]
 
-# d1 = new_data.head(10)
-# print d1
+d1 = new_data.head(10)
+for x in xrange(0, d1.shape[0]):
+    print x
+    if x == 10:
+        d1 = d1.append(new_data.head(11, 20))
+
+print "anpother version:"
+
+while 
+
+
+# # print d1
 
 # df = pd.DataFrame()
 # print df.empty
 # df = df.append(d1.iloc[1])
-# print df
+# # print df
 
 # for x in xrange(1, 10):
 #     if x % 2 == 0:
