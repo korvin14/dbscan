@@ -62,7 +62,7 @@ class myDBSCAN():
                     neighbours.iloc[point_next])
                 if neighbours_next.shape[0] >= self.m_pts:
                     neighbours = neighbours.append(neighbours_next)
-            if !self.belongToCluster(neighbours.iloc[point_next]):
+            if self.belongToCluster(neighbours.iloc[point_next]) == 0:
                 self.Cluster.addPoint(neighbours.iloc[point_next])
             point_next += 1
 
