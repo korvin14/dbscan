@@ -34,7 +34,7 @@ class myDBSCAN():
             self.data.set_value(x, 'visited', 'y')
             neighbours = self.find_neighbours(self.data.iloc[x])
             if neighbours.shape[0] < self.m_pts:
-                self.data.noise[x] = 'y'
+                self.data.set_value(x, 'noise', 'y')
             else:
                 new_cluster = self.Cluster()
                 self.expandCluster(self.data.iloc[x], new_cluster, neighbours)
@@ -46,8 +46,9 @@ class myDBSCAN():
         point_next = 0
         while neighbours.iloc[point_next]:
             if neighbours.visited[point_next] == 'n':
-                neighbours.visited[point_next] = 'y'
-                self.data.visited[point_next] = 'y'  # kostyl'
+                neighbours.set_value(point_next, 'visited', 'y')
+                # kostyl' and wrong - another index there is
+                self.data.visited[point_next] = 'y'
                 neighbours_next = self.find_neighbours(
                     neighbours.iloc[point_next])
                 if neighbours_next.shape[0] >= self.m_pts:
@@ -77,14 +78,18 @@ class myDBSCAN():
                     pass
         return belongs
 
+    def mapClusters():
+        """takes indexes from neighbours and transform to cluster"""
+        pass
+
 pd.set_option('mode.chained_assignment', 'warn')
 data = pd.read_csv("order201510-small.csv", header=None,
                    usecols=[0, 3, 4], names=['id', 'x', 'y'],
                    dtype={'id': np.int32})
 upd_data = data.assign(visited=lambda x: 'n', noise=lambda x: 'n')
+# upd_data = upd_data.sort_values(['id'], ascending=[True])  # mb need sorting
 
 # db = myDBSCAN(eps=0.001, m_pts=4)
-# d1 = d1.sort_values(['id'], ascending=[True])  # mb need sorting
 # clusters = db.clusterize(upd_data)
 # print clusters
 
