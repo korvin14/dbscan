@@ -5,23 +5,21 @@ import pandas as pd
 class myDBSCAN():
     clusters_number = 0
 
-    def __init__(self, eps, m_pts, metric="euclidian"):
+    def __init__(self, eps, m_pts, metric="euclidianSquared"):
         self.eps = eps
         self.m_pts = m_pts
         self.clusters = []
-        # self.clusters_number = 0  # dont think i need since len??
 
     class Cluster():
         def __init__(self):
             self.points = {}
-            print "cluster # ", myDBSCAN.clusters_number
             myDBSCAN.clusters_number += 1
 
-        # noise and visited is only for DF. all in clusters doesnt follow it
+        # noise and visited is only for myDBSCAN.data. clustered points doesnt
+        # need it
         def addPoint(self, id, x, y):
             xy = (x, y)  # tuple because we just need to store it
             self.points[id] = xy
-            print "added p ", id
 
     def clusterize(self, input_data):
         self.data = input_data
@@ -31,33 +29,31 @@ class myDBSCAN():
             if self.data.loc[x, 'visited'] == 'n':
                 self.data.set_value(x, 'visited', 'y')
                 neighbours_id = self.find_neighbours_id(x)
-                print "neighbours id: ", neighbours_id
                 if (len(neighbours_id) < self.m_pts):
                     self.data.set_value(x, 'noise', 'y')
                 else:
                     new_cluster = self.Cluster()
                     new_cluster = self.expandCluster(
                         self.data.iloc[x], new_cluster, neighbours_id)
-                    # print "cluster :\n", new_cluster.points
                     self.clusters.append(new_cluster)
         return self.clusters
 
     def find_neighbours_id(self, pd_id):
         neighbours_id = []
         for check_point_id in xrange(0, self.data_size):
-            if self.euclidian(self.data.iloc[pd_id],
-                              self.data.iloc[check_point_id]) < self.eps:
+            if self.euclidianSquared(self.data.iloc[pd_id],
+                                     self.data.iloc[check_point_id]) < self.eps:
                 neighbours_id.append(check_point_id)
         return neighbours_id
 
-    def euclidian(self, point1, point2):
+    def euclidianSquared(self, point1, point2):
+        """Calculates distance without sqrt"""
         return (point1[1] - point2[1])**2 + (point1[2] - point2[2])**2
 
     def expandCluster(self, point, cluster, neighbours_id):
         cluster.addPoint(point[0], point[1], point[2])
-        print "neighbours_id", neighbours_id
-        print "nighb 0 ", neighbours_id[0]
         for p_id, el in enumerate(neighbours_id):
+            # cuz of the enum - make every neighbs_id el[p_id]??
             if self.data.loc[neighbours_id[p_id], 'visited'] == 'n':
                 self.data.loc[neighbours_id[p_id], 'visited'] = 'y'
                 p_neighbours_id = self.find_neighbours_id(neighbours_id[p_id])
@@ -68,12 +64,12 @@ class myDBSCAN():
                 cluster.addPoint(add_point[0], add_point[1], add_point[2])
         return cluster
 
-    def belongToCluster(self, point_rid):  # real id, not pd index
+    def belongToCluster(self, point_rid):  # real id, not self.data DF index
         belongs = 0
         if len(self.clusters) == 0:
             return 0  # doesnt matter that much. duplicate ids wont be added to dict inside cluster anyway
-        for cl in xrange(0, self.cluster_number):
-            if point_rid in self.clusters[cl].cluster_points:
+        for cl in self.clusters:
+            if point_rid in cl.points:
                 belongs = 1
                 break
         return belongs
@@ -85,13 +81,12 @@ for x in xrange(0, 3):
     for i in xrange(0, 3):
         if x == i:
             dots.append((x, x, i))  # tryout with np.rand(id)
-
-tochki = [(999, 999, 999), (9999, 9999, 9999), (12, 3, 6)]
-# print "dots \n", dots
-# for x in xrange(50, 53):
-#     for i in xrange(50, 53):
-#         if x == i:
-#             dots.append((x - 47, x, i))
+for x in xrange(50, 53):
+    for i in xrange(50, 53):
+        if x == i:
+            dots.append((x - 47, x, i))
+dots.append((145, 100, 100))
+dots.append((146, 100, 100))
 
 pd.set_option('mode.chained_assignment', 'warn')
 test_data = pd.DataFrame(data=dots, columns=['id', 'x', 'y'])
@@ -100,10 +95,9 @@ print test_data
 
 db = myDBSCAN(eps=3, m_pts=2)
 clusters = db.clusterize(test_data)
-
-# print "clusters number is", db.cluster_number
-# print "cluster ", db.cluster_number - 1
-# print clusters[0].cluster_points
-# print "cluster ", db.cluster_number
-# print clusters[1].cluster_points
+cl_count = 0
+for i in clusters:
+    print "cluster #", cl_count
+    print "points ble ", i.points
+    cl_count += 1
 """TEST END"""
