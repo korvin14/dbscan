@@ -1,5 +1,9 @@
 import numpy as np
-import pandas as pd
+# import pandas as pd
+import time
+import csv
+
+# seems to not work on big set with some condition. debug.
 
 
 class myDBSCAN():
@@ -13,54 +17,55 @@ class myDBSCAN():
     class Cluster():
         def __init__(self):
             self.points = {}
+            print "cl # ", myDBSCAN.clusters_number
             myDBSCAN.clusters_number += 1
 
         # noise and visited is only for myDBSCAN.data. clustered points doesnt
         # need it
         def addPoint(self, id, x, y):
             xy = (x, y)  # tuple because we just need to store it
+            # print "id {} x {} y {}".format(id, x, y)
             self.points[id] = xy
 
     def clusterize(self, input_data):
         self.data = input_data
-        del input_data
-        self.data_size = self.data.shape[0]
+        self.data_size = len(self.data)
         for x in xrange(0, self.data_size):
-            if self.data.loc[x, 'visited'] == 'n':
-                self.data.set_value(x, 'visited', 'y')
-                neighbours_id = self.find_neighbours_id(x)
-                if (len(neighbours_id) < self.m_pts):
-                    self.data.set_value(x, 'noise', 'y')
+            if self.data[x][3] == 0:
+                self.data[x][3] = 1
+                neighbours_ids = self.find_neighbours_ids(x)
+                if (len(neighbours_ids) < self.m_pts):
+                    self.data[x][4] = 1
                 else:
                     new_cluster = self.Cluster()
                     new_cluster = self.expandCluster(
-                        self.data.iloc[x], new_cluster, neighbours_id)
+                        self.data[x], new_cluster, neighbours_ids)
                     self.clusters.append(new_cluster)
         return self.clusters
 
-    def find_neighbours_id(self, pd_id):
-        neighbours_id = []
+    def find_neighbours_ids(self, pt_id):  # point number in table
+        neighbours_ids = []
         for check_point_id in xrange(0, self.data_size):
-            if self.euclidianSquared(self.data.iloc[pd_id],
-                                     self.data.iloc[check_point_id]) < self.eps:
-                neighbours_id.append(check_point_id)
-        return neighbours_id
+            if self.euclidianSquared(self.data[pt_id],
+                                     self.data[check_point_id]) < self.eps:
+                neighbours_ids.append(check_point_id)
+        return neighbours_ids
 
     def euclidianSquared(self, point1, point2):
         """Calculates distance without sqrt"""
         return (point1[1] - point2[1])**2 + (point1[2] - point2[2])**2
 
-    def expandCluster(self, point, cluster, neighbours_id):
+    def expandCluster(self, point, cluster, neighbours_ids):
         cluster.addPoint(point[0], point[1], point[2])
-        for p_id, el in enumerate(neighbours_id):
+        for p_id, el in enumerate(neighbours_ids):
             # cuz of the enum - make every neighbs_id el[p_id]??
-            if self.data.loc[neighbours_id[p_id], 'visited'] == 'n':
-                self.data.loc[neighbours_id[p_id], 'visited'] = 'y'
-                p_neighbours_id = self.find_neighbours_id(neighbours_id[p_id])
-                if len(p_neighbours_id) >= self.m_pts:
-                    neighbours_id.extend(p_neighbours_id)
-            if self.belongToCluster(neighbours_id[p_id]) == 0:
-                add_point = self.data.iloc[neighbours_id[p_id]]
+            if self.data[el][3] == 0:
+                self.data[el][3] = 1
+                el_neighbours_id = self.find_neighbours_ids(el)
+                if len(el_neighbours_id) >= self.m_pts:
+                    neighbours_ids.extend(el_neighbours_id)
+            if self.belongToCluster(self.data[el][0]) == 0:
+                add_point = self.data[el]
                 cluster.addPoint(add_point[0], add_point[1], add_point[2])
         return cluster
 
@@ -80,24 +85,41 @@ dots = []
 for x in xrange(0, 3):
     for i in xrange(0, 3):
         if x == i:
-            dots.append((x, x, i))  # tryout with np.rand(id)
+            dots.append([x, x, i, 0, 0])  # tryout with np.rand(id)
 for x in xrange(50, 53):
     for i in xrange(50, 53):
         if x == i:
-            dots.append((x - 47, x, i))
-dots.append((145, 100, 100))
-dots.append((146, 100, 100))
+            dots.append([x - 47, x, i, 0, 0])
+dots.append([145, 100, 100, 0, 0])
+dots.append([146, 100, 100, 0, 0])
 
-pd.set_option('mode.chained_assignment', 'warn')
-test_data = pd.DataFrame(data=dots, columns=['id', 'x', 'y'])
-test_data = test_data.assign(visited=lambda x: 'n', noise=lambda x: 'n')
-print test_data
+print dots
 
 db = myDBSCAN(eps=3, m_pts=2)
-clusters = db.clusterize(test_data)
+clusters = db.clusterize(dots)
+print "number of cluster overall - ", len(clusters)
 cl_count = 0
 for i in clusters:
     print "cluster #", cl_count
-    print "points ble ", i.points
+    print "points ", i.points
     cl_count += 1
-"""TEST END"""
+
+"""REAL DATA"""
+# print "start reading data"
+# start = time.time()
+# table = []
+# with open("order201510-small.csv", "rb") as f:
+#     lines = csv.reader(f, delimiter=',')
+#     for one in lines:
+#         table.append([int(one[0]), np.float64(
+#             one[3]), np.float64(one[4]), 0, 0])
+# print len(table)
+# print table
+# print "finished reading data in {}s".format(time.time() - start)
+
+# start = time.time()
+# db = myDBSCAN(eps=0.001, m_pts=4)
+# print "ported data"
+# clusters = db.clusterize(table)
+# print db.clusters_number
+# print "finished clustering in {} s".format(start - time.time())
